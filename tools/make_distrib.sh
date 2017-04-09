@@ -32,7 +32,8 @@ else
   cp -rf $OUT_DOCS_PATH $DISTRIB_DOCS_PATH
 
   # Create README.txt
-  python tools/make_readme.py --output-dir $DISTRIB_PATH/ --platform $DISTRIB_PLATFORM
+  pyExec=${PYTHON_EXECUTABLE:-python}
+  $pyExec tools/make_readme.py --output-dir $DISTRIB_PATH/ --platform $DISTRIB_PLATFORM
 
   # Copy miscellaneous files to the root directory.
   cp -f ./LICENSE.txt $DISTRIB_PATH

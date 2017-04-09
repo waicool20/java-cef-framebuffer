@@ -6,6 +6,7 @@ package org.cef.browser;
 
 import java.awt.Component;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.util.Vector;
 
 import org.cef.callback.CefRunFileDialogCallback;
@@ -288,4 +289,10 @@ public interface CefBrowser {
    * @param word replace selected word with this word.
    */
   public void replaceMisspelling(String word);
+
+  /**
+   * Retrieves the current frame rendered onto a buffered image
+   * @return the current frame
+   */
+  public BufferedImage getCurrentFrameBuffer();
 }

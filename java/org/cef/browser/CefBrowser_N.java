@@ -10,6 +10,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.Vector;
 
 import org.cef.callback.CefDragData;
@@ -561,6 +562,11 @@ abstract class CefBrowser_N extends CefNativeAdapter implements CefBrowser {
     } catch (UnsatisfiedLinkError ule) {
       ule.printStackTrace();
     }
+  }
+
+  @Override
+  public BufferedImage getCurrentFrameBuffer() {
+    return null;
   }
 
   private final native boolean N_CreateBrowser(CefClientHandler clientHandler,
