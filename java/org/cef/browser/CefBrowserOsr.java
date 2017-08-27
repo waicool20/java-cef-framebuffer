@@ -30,7 +30,7 @@ class CefBrowserOsr extends CefBrowser_N implements CefRenderHandler {
     private CefRenderer renderer_;
     private GLCanvas canvas_;
     private long window_handle_ = 0;
-    private Rectangle browser_rect_ = new Rectangle(0, 0, 1, 1);  // Work around CEF issue #1437.
+    private Rectangle browser_rect_ = new Rectangle(0, 0, 1, 1); // Work around CEF issue #1437.
     private Point screenPoint_ = new Point(0, 0);
     private CefClientHandler clientHandler_;
     private String url_;
@@ -41,14 +41,15 @@ class CefBrowserOsr extends CefBrowser_N implements CefRenderHandler {
     private CefBrowserOsr devTools_ = null;
     private BufferedImage currentFrameBuffer = null;
     private AWTGLReadBufferUtil readBufferUtil = null;
+    ;
 
     CefBrowserOsr(CefClientHandler clientHandler, String url, boolean transparent,
-        CefRequestContext context) {
+            CefRequestContext context) {
         this(clientHandler, url, transparent, context, null, null);
     }
 
     private CefBrowserOsr(CefClientHandler clientHandler, String url, boolean transparent,
-        CefRequestContext context, CefBrowserOsr parent, Point inspectAt) {
+            CefRequestContext context, CefBrowserOsr parent, Point inspectAt) {
         super();
         isTransparent_ = transparent;
         renderer_ = new CefRenderer(transparent);
@@ -60,17 +61,19 @@ class CefBrowserOsr extends CefBrowser_N implements CefRenderHandler {
         createGLCanvas();
     }
 
-    @Override public Component getUIComponent() {
+    @Override
+    public Component getUIComponent() {
         return canvas_;
     }
 
-    @Override public CefRenderHandler getRenderHandler() {
+    @Override
+    public CefRenderHandler getRenderHandler() {
         return this;
     }
 
-    @Override public synchronized void close() {
-        if (context_ != null)
-            context_.dispose();
+    @Override
+    public synchronized void close() {
+        if (context_ != null) context_.dispose();
         if (parent_ != null) {
             parent_.closeDevTools();
             parent_.devTools_ = null;
@@ -79,14 +82,16 @@ class CefBrowserOsr extends CefBrowser_N implements CefRenderHandler {
         super.close();
     }
 
-    @Override public synchronized CefBrowser getDevTools() {
+    @Override
+    public synchronized CefBrowser getDevTools() {
         return getDevTools(null);
     }
 
-    @Override public synchronized CefBrowser getDevTools(Point inspectAt) {
+    @Override
+    public synchronized CefBrowser getDevTools(Point inspectAt) {
         if (devTools_ == null) {
-            devTools_ =
-                new CefBrowserOsr(clientHandler_, url_, isTransparent_, context_, this, inspectAt);
+            devTools_ = new CefBrowserOsr(
+                    clientHandler_, url_, isTransparent_, context_, this, inspectAt);
         }
         return devTools_;
     }
@@ -102,49 +107,55 @@ class CefBrowserOsr extends CefBrowser_N implements CefRenderHandler {
                 surface.lockSurface();
                 window_handle_ = getWindowHandle(surface.getSurfaceHandle());
                 surface.unlockSurface();
-                assert (window_handle_ != 0);
+                assert(window_handle_ != 0);
             }
         }
         return window_handle_;
     }
 
-    @SuppressWarnings("serial") private void createGLCanvas() {
+    @SuppressWarnings("serial")
+    private void createGLCanvas() {
         GLProfile glprofile = GLProfile.getMaxFixedFunc(true);
         readBufferUtil = new AWTGLReadBufferUtil(glprofile, true);
         GLCapabilities glcapabilities = new GLCapabilities(glprofile);
         canvas_ = new GLCanvas(glcapabilities) {
-            @Override public void paint(Graphics g) {
+            @Override
+            public void paint(Graphics g) {
                 if (parent_ != null) {
                     createDevTools(parent_, clientHandler_, getWindowHandle(), isTransparent_, null,
-                        inspectAt_);
+                            inspectAt_);
                 } else {
                     createBrowser(clientHandler_, getWindowHandle(), url_, isTransparent_, null,
-                        context_);
+                            context_);
                 }
                 super.paint(g);
             }
         };
 
         canvas_.addGLEventListener(new GLEventListener() {
-            @Override public void reshape(GLAutoDrawable glautodrawable, int x, int y, int width,
-                int height) {
+            @Override
+            public void reshape(
+                    GLAutoDrawable glautodrawable, int x, int y, int width, int height) {
                 browser_rect_.setBounds(x, y, width, height);
                 screenPoint_ = canvas_.getLocationOnScreen();
                 wasResized(width, height);
                 saveBuffer(glautodrawable);
             }
 
-            @Override public void init(GLAutoDrawable glautodrawable) {
+            @Override
+            public void init(GLAutoDrawable glautodrawable) {
                 renderer_.initialize(glautodrawable.getGL().getGL2());
                 saveBuffer(glautodrawable);
             }
 
-            @Override public void dispose(GLAutoDrawable glautodrawable) {
+            @Override
+            public void dispose(GLAutoDrawable glautodrawable) {
                 renderer_.cleanup(glautodrawable.getGL().getGL2());
                 readBufferUtil.dispose(glautodrawable.getGL());
             }
 
-            @Override public void display(GLAutoDrawable glautodrawable) {
+            @Override
+            public void display(GLAutoDrawable glautodrawable) {
                 renderer_.render(glautodrawable.getGL().getGL2());
                 saveBuffer(glautodrawable);
             }
@@ -156,64 +167,77 @@ class CefBrowserOsr extends CefBrowser_N implements CefRenderHandler {
         });
 
         canvas_.addMouseListener(new MouseListener() {
-            @Override public void mousePressed(MouseEvent e) {
+            @Override
+            public void mousePressed(MouseEvent e) {
                 sendMouseEvent(e);
             }
 
-            @Override public void mouseReleased(MouseEvent e) {
+            @Override
+            public void mouseReleased(MouseEvent e) {
                 sendMouseEvent(e);
             }
 
-            @Override public void mouseEntered(MouseEvent e) {
+            @Override
+            public void mouseEntered(MouseEvent e) {
                 sendMouseEvent(e);
             }
 
-            @Override public void mouseExited(MouseEvent e) {
+            @Override
+            public void mouseExited(MouseEvent e) {
                 sendMouseEvent(e);
             }
 
-            @Override public void mouseClicked(MouseEvent e) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
                 sendMouseEvent(e);
             }
         });
 
         canvas_.addMouseMotionListener(new MouseMotionListener() {
-            @Override public void mouseMoved(MouseEvent e) {
+            @Override
+            public void mouseMoved(MouseEvent e) {
                 sendMouseEvent(e);
             }
 
-            @Override public void mouseDragged(MouseEvent e) {
+            @Override
+            public void mouseDragged(MouseEvent e) {
                 sendMouseEvent(e);
             }
         });
 
         canvas_.addMouseWheelListener(new MouseWheelListener() {
-            @Override public void mouseWheelMoved(MouseWheelEvent e) {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
                 sendMouseWheelEvent(e);
             }
         });
 
         canvas_.addKeyListener(new KeyListener() {
-            @Override public void keyTyped(KeyEvent e) {
+            @Override
+            public void keyTyped(KeyEvent e) {
                 sendKeyEvent(e);
             }
 
-            @Override public void keyPressed(KeyEvent e) {
+            @Override
+            public void keyPressed(KeyEvent e) {
                 sendKeyEvent(e);
             }
 
-            @Override public void keyReleased(KeyEvent e) {
+            @Override
+            public void keyReleased(KeyEvent e) {
                 sendKeyEvent(e);
             }
         });
 
         canvas_.setFocusable(true);
         canvas_.addFocusListener(new FocusListener() {
-            @Override public void focusLost(FocusEvent e) {
+            @Override
+            public void focusLost(FocusEvent e) {
                 setFocus(false);
             }
 
-            @Override public void focusGained(FocusEvent e) {
+            @Override
+            public void focusGained(FocusEvent e) {
                 // Dismiss any Java menus that are currently displayed.
                 MenuSelectionManager.defaultManager().clearSelectedPath();
                 setFocus(true);
@@ -221,29 +245,34 @@ class CefBrowserOsr extends CefBrowser_N implements CefRenderHandler {
         });
     }
 
-    @Override public Rectangle getViewRect(CefBrowser browser) {
+    @Override
+    public Rectangle getViewRect(CefBrowser browser) {
         return browser_rect_;
     }
 
-    @Override public Point getScreenPoint(CefBrowser browser, Point viewPoint) {
+    @Override
+    public Point getScreenPoint(CefBrowser browser, Point viewPoint) {
         Point screenPoint = new Point(screenPoint_);
         screenPoint.translate(viewPoint.x, viewPoint.y);
         return screenPoint;
     }
 
-    @Override public void onPopupShow(CefBrowser browser, boolean show) {
+    @Override
+    public void onPopupShow(CefBrowser browser, boolean show) {
         if (!show) {
             renderer_.clearPopupRects();
             invalidate();
         }
     }
 
-    @Override public void onPopupSize(CefBrowser browser, Rectangle size) {
+    @Override
+    public void onPopupSize(CefBrowser browser, Rectangle size) {
         renderer_.onPopupSize(size);
     }
 
-    @Override public void onPaint(CefBrowser browser, boolean popup, Rectangle[] dirtyRects,
-        ByteBuffer buffer, int width, int height) {
+    @Override
+    public void onPaint(CefBrowser browser, boolean popup, Rectangle[] dirtyRects,
+            ByteBuffer buffer, int width, int height) {
         canvas_.getContext().makeCurrent();
         renderer_.onPaint(canvas_.getGL().getGL2(), popup, dirtyRects, buffer, width, height);
         canvas_.getContext().release();
@@ -254,7 +283,8 @@ class CefBrowserOsr extends CefBrowser_N implements CefRenderHandler {
         });
     }
 
-    @Override public void onCursorChange(CefBrowser browser, final int cursorType) {
+    @Override
+    public void onCursorChange(CefBrowser browser, final int cursorType) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 canvas_.setCursor(new Cursor(cursorType));
@@ -262,13 +292,18 @@ class CefBrowserOsr extends CefBrowser_N implements CefRenderHandler {
         });
     }
 
-    @Override
-    public boolean startDragging(CefBrowser browser, CefDragData dragData, int mask, int x, int y) {
-        // TODO(JCEF) Prepared for DnD support using OSR mode.
-        return false;
-    }
+  @Override
+  public boolean startDragging(CefBrowser browser,
+                               CefDragData dragData,
+                               int mask,
+                               int x,
+                               int y) {
+    // TODO(JCEF) Prepared for DnD support using OSR mode.
+    return false;
+  }
 
-    @Override public void updateDragCursor(CefBrowser browser, int operation) {
+    @Override
+    public void updateDragCursor(CefBrowser browser, int operation) {
         // TODO(JCEF) Prepared for DnD support using OSR mode.
     }
 }
